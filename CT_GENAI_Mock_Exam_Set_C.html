@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CT-GenAI Mock Exam — Set C</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0f1724;
+  --surface:#162032;
+  --surface2:#1c2a3f;
+  --border:#243450;
+  --cyan:#00d4ff;
+  --cyan-dim:#0097b8;
+  --green:#00e5a0;
+  --red:#ff4d6a;
+  --amber:#ffb700;
+  --text:#e2eaf7;
+  --text-dim:#7a92b4;
+  --text-mute:#3d5476;
+  --sans:'Space Grotesk',system-ui,sans-serif;
+  --mono:'Space Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;line-height:1.6}
+
+/* ── HEADER ──────────────────────────────────────── */
+.header{
+  background:linear-gradient(135deg,#0a1628 0%,#162032 60%,#0d1f3a 100%);
+  border-bottom:1px solid var(--border);
+  padding:48px 40px 36px;
+  position:relative;overflow:hidden;
+}
+.header::before{
+  content:'C';
+  position:absolute;right:-20px;top:-40px;
+  font-size:320px;font-weight:700;color:rgba(0,212,255,0.03);
+  font-family:var(--mono);line-height:1;pointer-events:none;
+  user-select:none;
+}
+.header-inner{max-width:860px;margin:0 auto;position:relative}
+.set-tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:3px;
+  color:var(--cyan);border:1px solid var(--cyan-dim);
+  display:inline-block;padding:3px 10px;margin-bottom:20px;
+}
+.header h1{
+  font-size:clamp(26px,4vw,44px);font-weight:700;
+  line-height:1.1;color:var(--text);margin-bottom:6px;
+}
+.header h1 span{color:var(--cyan)}
+.header-sub{
+  font-family:var(--mono);font-size:12px;color:var(--text-dim);
+  margin-top:8px;letter-spacing:.3px;
+}
+.meta-strip{
+  display:flex;flex-wrap:wrap;gap:0;
+  margin-top:32px;border:1px solid var(--border);
+  overflow:hidden;
+}
+.meta-item{
+  flex:1;min-width:120px;padding:12px 16px;
+  border-right:1px solid var(--border);
+}
+.meta-item:last-child{border-right:none}
+.meta-label{font-family:var(--mono);font-size:9px;letter-spacing:2px;color:var(--text-mute);margin-bottom:4px}
+.meta-val{font-size:14px;font-weight:600;color:var(--cyan)}
+
+/* ── PROGRESS ────────────────────────────────────── */
+.progress-wrap{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border)}
+.progress-inner{max-width:860px;margin:0 auto;padding:8px 40px;display:flex;align-items:center;gap:16px}
+.progress-track{flex:1;height:2px;background:var(--surface2)}
+.progress-fill{height:100%;background:var(--cyan);width:0;transition:width .3s}
+.progress-label{font-family:var(--mono);font-size:10px;color:var(--text-dim);white-space:nowrap}
+
+/* ── INSTRUCTIONS ────────────────────────────────── */
+.instructions{max-width:860px;margin:32px auto;padding:0 40px}
+.instr{
+  background:var(--surface);border:1px solid var(--border);
+  border-left:3px solid var(--cyan);
+  padding:16px 20px;font-family:var(--mono);font-size:11.5px;
+  line-height:1.9;color:var(--text-dim);
+}
+
+/* ── CHAPTER DIVIDER ─────────────────────────────── */
+.chapter-wrap{max-width:860px;margin:40px auto 0;padding:0 40px}
+.chapter-div{
+  display:grid;grid-template-columns:auto 1fr;
+  align-items:center;gap:16px;margin-bottom:24px;
+}
+.ch-pill{
+  font-family:var(--mono);font-size:9px;letter-spacing:2px;
+  background:var(--cyan);color:var(--bg);
+  padding:4px 10px;font-weight:700;white-space:nowrap;
+}
+.ch-name{font-size:13px;font-weight:500;color:var(--text-dim)}
+.ch-line{height:1px;background:var(--border);margin-top:2px}
+
+/* ── QUESTION CARD ───────────────────────────────── */
+.q-wrap{max-width:860px;margin:0 auto;padding:0 40px}
+.q-card{
+  background:var(--surface);border:1px solid var(--border);
+  margin-bottom:12px;padding:28px 28px 20px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s;
+}
+.q-card:hover{border-color:var(--cyan-dim)}
+.q-watermark{
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:96px;font-weight:700;
+  color:rgba(0,212,255,0.04);line-height:1;
+  pointer-events:none;user-select:none;
+}
+.q-stripe{
+  position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--border);
+}
+.q-card.answered .q-stripe{background:var(--cyan)}
+.q-num{
+  font-family:var(--mono);font-size:10px;letter-spacing:2px;
+  color:var(--cyan);margin-bottom:12px;font-weight:700;
+}
+.q-text{
+  font-size:14.5px;font-weight:400;line-height:1.7;
+  color:var(--text);margin-bottom:20px;max-width:72ch;
+}
+.q-text strong{font-weight:600;color:#fff}
+
+/* options */
+.options{list-style:none;display:flex;flex-direction:column;gap:6px}
+.opt{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:10px 14px;border:1px solid var(--border);
+  cursor:pointer;transition:all .15s;background:var(--surface2);
+  font-size:13px;color:var(--text-dim);
+}
+.opt:hover{border-color:var(--cyan-dim);color:var(--text);background:#1e3050}
+.opt.selected{border-color:var(--cyan);color:var(--text);background:#0d2a40}
+.opt.correct{border-color:var(--green);background:#001f14;color:var(--green)}
+.opt.wrong{border-color:var(--red);background:#200010;color:var(--red)}
+.opt-key{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  color:var(--text-mute);min-width:16px;margin-top:1px;
+}
+.opt.selected .opt-key{color:var(--cyan)}
+.opt.correct .opt-key{color:var(--green)}
+.opt.wrong .opt-key{color:var(--red)}
+
+/* reveal */
+.reveal{
+  display:none;margin-top:14px;
+  border:1px solid var(--border);border-left:3px solid var(--green);
+  background:#001a10;padding:12px 16px;
+  font-family:var(--mono);font-size:11.5px;line-height:1.8;
+}
+.reveal.show{display:block}
+.reveal-label{color:var(--green);font-weight:700;font-size:10px;letter-spacing:2px;margin-bottom:4px}
+.reveal-exp{color:#7abf9a;font-size:11.5px}
+
+.toggle{
+  margin-top:12px;font-family:var(--mono);font-size:10px;
+  letter-spacing:1.5px;background:none;
+  border:1px solid var(--border);color:var(--text-mute);
+  padding:5px 14px;cursor:pointer;transition:all .15s;
+}
+.toggle:hover{border-color:var(--text-dim);color:var(--text)}
+
+/* ── SUBMIT ──────────────────────────────────────── */
+.submit-wrap{max-width:860px;margin:32px auto;padding:0 40px}
+.submit-btn{
+  width:100%;padding:16px;font-family:var(--mono);font-size:12px;
+  letter-spacing:3px;background:var(--cyan);color:var(--bg);
+  border:none;cursor:pointer;font-weight:700;
+  transition:background .15s;
+}
+.submit-btn:hover{background:#00b8db}
+
+/* ── SCOREBOARD ──────────────────────────────────── */
+.score-wrap{max-width:860px;margin:0 auto 48px;padding:0 40px}
+.score-box{
+  display:none;background:var(--surface);
+  border:1px solid var(--border);border-top:3px solid var(--cyan);
+  padding:36px;
+}
+.score-box.show{display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px}
+.score-section{}
+.score-section .label{
+  font-family:var(--mono);font-size:9px;letter-spacing:3px;
+  color:var(--text-mute);margin-bottom:8px;
+}
+.score-section .value{font-size:42px;font-weight:700;line-height:1}
+.score-section .sub{font-size:13px;color:var(--text-dim);margin-top:4px}
+.verdict{font-size:22px;font-weight:600;margin-top:8px}
+.pass-color{color:var(--green)}
+.fail-color{color:var(--red)}
+
+footer{
+  text-align:center;padding:24px;
+  font-family:var(--mono);font-size:10px;
+  color:var(--text-mute);letter-spacing:1px;
+  border-top:1px solid var(--border);
+}
+
+@media(max-width:600px){
+  .header,.instructions,.chapter-wrap,.q-wrap,.submit-wrap,.score-wrap{padding-left:16px;padding-right:16px}
+  .meta-strip{flex-direction:column}
+  .meta-item{border-right:none;border-bottom:1px solid var(--border)}
+  .score-box.show{grid-template-columns:1fr}
+  .progress-inner{padding:8px 16px}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="set-tag">MOCK EXAM · SET C · INDEPENDENT</div>
+    <h1>CT-<span>GenAI</span><br>Certified Tester<br>Generative AI Testing</h1>
+    <div class="header-sub">ISTQB® Specialist Level · Unofficial Practice Paper · All-new questions</div>
+    <div class="meta-strip">
+      <div class="meta-item"><div class="meta-label">Questions</div><div class="meta-val">40</div></div>
+      <div class="meta-item"><div class="meta-label">Duration</div><div class="meta-val">60 min</div></div>
+      <div class="meta-item"><div class="meta-label">Pass mark</div><div class="meta-val">65% / 26</div></div>
+      <div class="meta-item"><div class="meta-label">Set</div><div class="meta-val">C</div></div>
+      <div class="meta-item"><div class="meta-label">Chapters</div><div class="meta-val">1 – 5</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="pFill"></div></div>
+    <div class="progress-label" id="pLabel">0 / 40 answered</div>
+  </div>
+</div>
+
+<div class="instructions">
+  <div class="instr">
+    Select ONE answer per question. Use SHOW ANSWER for immediate feedback, or SUBMIT ALL at the bottom to score the full paper.
+    Independently authored — not an official ISTQB® document. All questions are original and distinct from Set A and Set B.
+  </div>
+</div>
+
+<div id="exam"></div>
+
+<div class="submit-wrap">
+  <button class="submit-btn" onclick="submitAll()">SUBMIT ALL 40 QUESTIONS AND SCORE</button>
+</div>
+
+<div class="score-wrap">
+  <div class="score-box" id="scoreBox">
+    <div class="score-section">
+      <div class="label">YOUR SCORE</div>
+      <div class="value" id="sVal">—</div>
+      <div class="sub">out of 40</div>
+    </div>
+    <div class="score-section">
+      <div class="label">PERCENTAGE</div>
+      <div class="value" id="sPct">—</div>
+      <div class="sub">pass mark: 65%</div>
+    </div>
+    <div class="score-section">
+      <div class="label">RESULT</div>
+      <div class="verdict" id="sVerdict">—</div>
+      <div class="sub" id="sSub"></div>
+    </div>
+  </div>
+</div>
+
+<footer>CT-GenAI Mock Exam Set C · Independently Authored · Not affiliated with ISTQB®</footer>
+
+<script>
+const QS = [
+
+/* ══ CH 1 — GenAI Foundations (Q1-10) ═══════════════════════════════ */
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"An LLM is described as <strong>autoregressive</strong>. What does this mean in terms of how it generates output?",
+ opts:["A. It generates all output tokens simultaneously in parallel",
+       "B. It predicts each token based on all previously generated tokens",
+       "C. It retrieves answers from a pre-built index of training sentences",
+       "D. It requires a second forward pass to verify each generated token"],
+ ans:1,
+ exp:"Autoregressive generation means each token is sampled from a conditional probability distribution over the vocabulary given all prior tokens — tokens are produced sequentially, one at a time."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"What is the PRIMARY role of the <strong>system prompt</strong> in a production LLM application, from a testing perspective?",
+ opts:["A. It sets the random seed to ensure deterministic output",
+       "B. It defines the model's persona, constraints, and behavioural guardrails for every conversation",
+       "C. It compresses the user message to reduce token cost",
+       "D. It selects which attention heads are activated during inference"],
+ ans:1,
+ exp:"The system prompt establishes the model's role, rules, and constraints. For testers it is a critical test variable — changes to the system prompt can silently alter all downstream behaviours and must be version-controlled and regression-tested."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"A model is said to suffer from <strong>context window overflow</strong>. Which symptom MOST directly indicates this failure mode?",
+ opts:["A. The model responds slower than usual",
+       "B. The model loses coherence with information provided early in a long conversation",
+       "C. The model starts producing tokens in a different language",
+       "D. API rate limits are exceeded"],
+ ans:1,
+ exp:"When a conversation exceeds the model's context window, early tokens are truncated or compressed, causing the model to 'forget' earlier instructions, facts, or constraints — a testable coherence regression."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"In a multi-agent GenAI system, an <strong>orchestrator</strong> agent is BEST described as:",
+ opts:["A. The agent that directly interfaces with the end user's browser",
+       "B. An agent responsible for decomposing tasks and directing specialist sub-agents",
+       "C. A monitoring service that logs all agent outputs",
+       "D. The agent that holds the system's master API key"],
+ ans:1,
+ exp:"An orchestrator plans and coordinates — breaking goals into subtasks and delegating them to specialist agents (retrieval, code execution, summarisation). Testing an orchestrator requires verifying correct task decomposition and sub-agent handoff logic."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"Which of the following BEST distinguishes a <strong>foundation model</strong> from a task-specific ML model?",
+ opts:["A. Foundation models are always smaller and faster to train",
+       "B. Foundation models are pre-trained on broad data and adapted to many downstream tasks without full retraining",
+       "C. Foundation models do not support fine-tuning",
+       "D. Foundation models are built exclusively for text generation"],
+ ans:1,
+ exp:"Foundation models (e.g. GPT-4, Gemini, Claude) are pre-trained at scale on diverse data, then adapted via prompting, fine-tuning, or RLHF for specific tasks — contrasting with traditional ML models trained from scratch per task."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"A tester wants to prevent a GenAI system from generating responses outside a defined domain. Which architectural element is MOST appropriate to implement FIRST?",
+ opts:["A. Increasing the model's temperature setting",
+       "B. Reducing the context window size",
+       "C. Adding a system prompt with explicit domain constraints and out-of-scope refusal instructions",
+       "D. Switching to a larger model variant"],
+ ans:2,
+ exp:"System prompt constraints are the primary mechanism for scoping model behaviour. They are testable, versionable, and deployable without model changes — the correct first architectural lever before considering model-level changes."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"What is <strong>top-p sampling</strong> (nucleus sampling) and why is it relevant to GenAI testers?",
+ opts:["A. A method that selects the single highest-probability token every time, making output fully deterministic",
+       "B. A sampling method that restricts token selection to the smallest set whose cumulative probability exceeds p, affecting output diversity",
+       "C. A post-processing filter that removes low-quality sentences from the model's output",
+       "D. A technique for splitting long prompts across multiple API calls"],
+ ans:1,
+ exp:"Top-p restricts the sampling pool to high-probability tokens whose cumulative mass reaches p. Varying top-p changes output diversity and consistency — a parameter testers must control and document for reproducible test results."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"Multimodal LLMs accept inputs beyond text. Which combination represents a currently deployed multimodal capability relevant to testing?",
+ opts:["A. Audio waveforms and DNA sequences",
+       "B. Text, images, and in some models audio or video",
+       "C. Executable binaries and structured SQL queries only",
+       "D. Only text and structured JSON"],
+ ans:1,
+ exp:"Modern multimodal models (GPT-4o, Gemini, Claude 3+) process text combined with images, and increasingly audio and video — each modality introducing distinct quality attributes and test strategies beyond text-only evaluation."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"What does <strong>knowledge cutoff</strong> mean for a deployed LLM, and what testing risk does it introduce?",
+ opts:["A. The maximum number of tokens the model can process per request",
+       "B. The date beyond which the model has no training data, risking outdated or incorrect responses to recent-event queries",
+       "C. The point at which the model's confidence score drops below an acceptable threshold",
+       "D. The API rate limit applied per minute"],
+ ans:1,
+ exp:"A knowledge cutoff means the model's parametric knowledge stops at a fixed date. For applications querying recent events, this introduces factual staleness — a testable quality risk requiring RAG or tool-augmented retrieval as a mitigation."},
+
+{ch:"CH 1",chn:"GenAI Foundations for Testers",
+ q:"In the context of LLM fine-tuning, what is the PRIMARY purpose of a <strong>validation set</strong>?",
+ opts:["A. To provide examples the model uses for gradient updates during training",
+       "B. To monitor for overfitting by evaluating model performance on unseen examples during training",
+       "C. To define the system prompt used in production deployment",
+       "D. To compute the final benchmark score reported to stakeholders"],
+ ans:1,
+ exp:"The validation set is held out during training and used to monitor generalisation. Rising validation loss while training loss falls signals overfitting — the fine-tuned model is memorising training examples rather than learning transferable patterns."},
+
+/* ══ CH 2 — Quality Attributes (Q11-18) ════════════════════════════ */
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"A GenAI legal research tool correctly identifies case law but presents it in dense, unstructured paragraphs that lawyers cannot quickly parse. Which quality attribute is PRIMARILY failing?",
+ opts:["A. Factuality",
+       "B. Usability and output readability",
+       "C. Privacy",
+       "D. Latency"],
+ ans:1,
+ exp:"Usability and readability concern whether outputs are structured, formatted, and presented in a way that end users can effectively consume — independent of factual correctness."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"A multilingual GenAI customer service bot performs significantly worse in Telugu and Kannada than in English. Which quality attribute does this asymmetry indicate?",
+ opts:["A. Toxicity",
+       "B. Fairness and equitable performance across language groups",
+       "C. IP compliance",
+       "D. Throughput"],
+ ans:1,
+ exp:"Unequal performance across languages, dialects, or demographic groups is a fairness failure — the system delivers unequal quality of service to different user populations."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"A GenAI code assistant occasionally suggests functions with known security vulnerabilities. Which quality attribute is MOST directly at risk?",
+ opts:["A. Style adherence",
+       "B. Safety and security of generated outputs",
+       "C. Coherence",
+       "D. Cost efficiency"],
+ ans:1,
+ exp:"Generating insecure code introduces downstream security risks into systems built with the tool's output — a safety/security quality attribute requiring adversarial code review and vulnerability scanning as test strategies."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"Which metric BEST quantifies the <strong>groundedness</strong> of a RAG system's response?",
+ opts:["A. BLEU score against a reference corpus",
+       "B. The proportion of factual claims in the response that can be traced to retrieved source documents",
+       "C. Response latency measured in milliseconds",
+       "D. Token count of the generated response"],
+ ans:1,
+ exp:"Groundedness measures whether the model's claims are supported by retrieved context rather than hallucinated from parametric memory — a key quality metric specific to RAG architectures."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"A GenAI image generation system produces outputs that consistently depict professionals in certain roles as one gender. This is PRIMARILY a failure of which quality attribute?",
+ opts:["A. Factuality",
+       "B. Latency",
+       "C. Fairness — specifically representational bias",
+       "D. IP compliance"],
+ ans:2,
+ exp:"Representational bias in image generation — systematic under- or over-representation of groups in roles — is a fairness failure requiring bias auditing with demographically diverse prompt sets."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"An organisation measures the number of tokens consumed per successful user task completion. This is an example of measuring which quality attribute?",
+ opts:["A. Coherence",
+       "B. Cost efficiency",
+       "C. Factuality",
+       "D. Privacy"],
+ ans:1,
+ exp:"Cost efficiency relates token consumption (directly tied to API cost) to the value delivered per task — a key operational metric for sustainable GenAI deployment."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"A GenAI summarisation tool correctly captures facts but omits the main argument of a 10-page document. This PRIMARILY indicates a failure of which attribute?",
+ opts:["A. Coherence and completeness",
+       "B. Privacy",
+       "C. Style adherence",
+       "D. Throughput"],
+ ans:0,
+ exp:"Coherence and completeness require that a summary captures the main thrust and key arguments of the source, not merely surface facts. Omitting the central argument is a completeness failure."},
+
+{ch:"CH 2",chn:"Quality Attributes for GenAI Systems",
+ q:"When testing a GenAI system for <strong>robustness</strong>, a tester is PRIMARILY verifying that:",
+ opts:["A. The system produces identical output for identical inputs across all runs",
+       "B. The system maintains acceptable quality under distributional shifts, noisy inputs, and adversarial conditions",
+       "C. The system never exceeds its stated token rate limit",
+       "D. The system's outputs are always shorter than the input prompt"],
+ ans:1,
+ exp:"Robustness is the quality attribute measuring resilience — whether the system degrades gracefully under real-world variations like typos, domain shift, unusual phrasing, or adversarial inputs."},
+
+/* ══ CH 3 — Test Design (Q19-27) ════════════════════════════════════ */
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"A tester runs the same prompt 30 times and finds that in 4 runs the model recommends an incorrect medication dosage. This approach exemplifies:",
+ opts:["A. Equivalence partitioning",
+       "B. Statistical/stochastic testing to characterise non-deterministic failure rate",
+       "C. Decision table testing",
+       "D. Boundary value analysis"],
+ ans:1,
+ exp:"Because LLM outputs are probabilistic, failures manifest as a rate rather than a binary pass/fail. Repeated execution with statistical analysis of failure frequency is the appropriate technique for characterising non-deterministic quality."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"Which approach BEST addresses the <strong>oracle problem</strong> when testing open-ended GenAI text generation?",
+ opts:["A. Comparing output token-by-token against a single reference string",
+       "B. Using rubric-based evaluation with multiple human raters or an LLM judge to assess quality dimensions",
+       "C. Checking that output length falls within a predefined character range",
+       "D. Verifying the API returns HTTP 200"],
+ ans:1,
+ exp:"The oracle problem arises because no single correct answer exists. Rubric-based evaluation — defining quality dimensions (relevance, accuracy, safety) and scoring each — is the standard mitigation, whether by human experts or calibrated LLM judges."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"A test team wants to verify that a GenAI chatbot handles <strong>multilingual input switching</strong> gracefully. Which test design technique is MOST appropriate?",
+ opts:["A. Boundary value analysis on input character count",
+       "B. Pairwise/combinatorial testing of language combinations and topic categories",
+       "C. Statement coverage of the inference engine code",
+       "D. Load testing with 1000 concurrent requests"],
+ ans:1,
+ exp:"Combinatorial testing efficiently covers the interaction space of multiple languages × topic categories × user roles without exhaustive enumeration — identifying failures at language-topic intersections that single-variable testing would miss."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"What is the MAIN difference between <strong>functional testing</strong> and <strong>behavioural testing</strong> in the context of GenAI systems?",
+ opts:["A. Functional testing checks if outputs are grammatically correct; behavioural testing checks API response codes",
+       "B. Functional testing verifies specific input-output contracts; behavioural testing assesses broader properties like consistency, safety, and alignment across diverse scenarios",
+       "C. Behavioural testing is only applicable to image generation models",
+       "D. There is no meaningful difference — they are synonymous in GenAI contexts"],
+ ans:1,
+ exp:"Functional testing verifies specific capabilities (e.g., 'does the model correctly classify this sentiment?'). Behavioural testing assesses emergent properties across a distribution of inputs — consistency, honesty, safety, and alignment with intended use."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"A tester discovers that a GenAI system produces safe outputs on single-turn prompts but generates harmful content when the same request is split across three conversational turns. This is an example of:",
+ opts:["A. Temperature instability",
+       "B. Multi-turn context accumulation attack — a form of adversarial jailbreak testing",
+       "C. Retrieval failure in the RAG pipeline",
+       "D. Tokenisation boundary error"],
+ ans:1,
+ exp:"Multi-turn jailbreaks exploit the model's tendency to comply incrementally — each turn appears innocuous but cumulatively shifts the model's behaviour. Testing must include multi-turn adversarial scenarios, not just single-shot prompts."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"In GenAI testing, a <strong>canary prompt</strong> is BEST described as:",
+ opts:["A. A prompt designed to produce the longest possible response for load testing",
+       "B. A reference prompt with a known expected output, used to detect regressions after model updates",
+       "C. A prompt that deliberately triggers API rate limiting",
+       "D. A prompt written in an obscure language to test multilingual capability"],
+ ans:1,
+ exp:"Canary prompts are regression anchors — fixed inputs with documented expected outputs. After any model update, canary prompts quickly surface behavioural regressions without running a full evaluation suite."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"A test team uses <strong>checklist-based evaluation</strong> for a GenAI customer service bot. Which limitation is MOST significant with this approach?",
+ opts:["A. Checklists are too expensive to create",
+       "B. Checklists can only be applied by developers, not QA engineers",
+       "C. Checklists assess predefined criteria but miss emergent failure modes that were not anticipated at design time",
+       "D. Checklist-based evaluation cannot be automated"],
+ ans:2,
+ exp:"Checklists are bounded by their authors' foresight. LLMs produce novel, unanticipated failures that no predefined checklist will capture — requiring complementary exploratory and adversarial testing strategies."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"Which statement about <strong>test data management</strong> for GenAI systems is MOST accurate?",
+ opts:["A. Any publicly available dataset is suitable for GenAI testing without further curation",
+       "B. Test data must be carefully curated to cover diverse demographics, domains, edge cases, and adversarial examples — and must not contaminate training data",
+       "C. GenAI systems should be tested exclusively on data from the production environment",
+       "D. Test data management for GenAI is identical to that for traditional software"],
+ ans:1,
+ exp:"GenAI test data requires active curation for coverage, diversity, and adversarial breadth. Critically, test data must be kept separate from training data to prevent data leakage that inflates evaluation scores."},
+
+{ch:"CH 3",chn:"Test Design for Non-Deterministic Systems",
+ q:"A QA team applies <strong>differential testing</strong> to two versions of a fine-tuned LLM. What does this technique involve?",
+ opts:["A. Testing the model at different temperatures on the same prompt",
+       "B. Running identical test inputs through both model versions and flagging divergent outputs for analysis",
+       "C. Testing the model on data from different geographic regions",
+       "D. Measuring the difference in API latency between two deployment regions"],
+ ans:1,
+ exp:"Differential testing runs the same prompt corpus through two model versions and identifies divergences — a systematic way to detect regressions or unintended behavioural shifts introduced by fine-tuning or model updates."},
+
+/* ══ CH 4 — Evaluation Methods (Q28-33) ════════════════════════════ */
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"A team evaluating a GenAI summarisation tool uses ROUGE-L. What does the 'L' variant specifically measure?",
+ opts:["A. The longest sentence in the reference text",
+       "B. The longest common subsequence between generated and reference text, capturing sentence-level structure",
+       "C. The lexical diversity of the generated output",
+       "D. The latency of the evaluation pipeline"],
+ ans:1,
+ exp:"ROUGE-L measures the longest common subsequence (LCS) between hypothesis and reference, rewarding outputs that preserve the sequential structure and flow of the reference — more sensitive to sentence order than ROUGE-N."},
+
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"When using an LLM as a judge to evaluate another LLM's outputs, which bias MOST commonly threatens validity?",
+ opts:["A. Confirmation bias from the human who wrote the evaluation prompt",
+       "B. Position bias — the judge model preferring responses that appear first in a pairwise comparison",
+       "C. Recency bias caused by the model's knowledge cutoff",
+       "D. Length bias always favouring shorter responses"],
+ ans:1,
+ exp:"LLM judges exhibit position bias — systematically preferring the first or last presented response regardless of quality. Mitigation requires randomising presentation order and averaging scores from multiple orderings."},
+
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"A team computes <strong>faithfulness</strong> and <strong>answer relevance</strong> scores as part of their RAG evaluation framework. Which framework is this MOST consistent with?",
+ opts:["A. BLEU / ROUGE standard NLP evaluation",
+       "B. RAGAS — a RAG-specific evaluation framework measuring retrieval and generation quality separately",
+       "C. ISO/IEC 25010 software quality model",
+       "D. The OWASP LLM Top 10 risk taxonomy"],
+ ans:1,
+ exp:"RAGAS (Retrieval-Augmented Generation Assessment) defines metrics including faithfulness (are claims grounded in retrieved context?) and answer relevance (does the response address the question?) — specifically designed for RAG pipeline evaluation."},
+
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"A tester needs to evaluate whether a GenAI model produces <strong>calibrated confidence</strong> — i.e., that when the model expresses high confidence, it is actually more often correct. Which technique is MOST appropriate?",
+ opts:["A. BLEU score comparison against a golden dataset",
+       "B. Calibration analysis — plotting model confidence against empirical accuracy across a held-out test set",
+       "C. Pairwise preference evaluation by human raters",
+       "D. Perplexity measurement on the test corpus"],
+ ans:1,
+ exp:"Calibration analysis compares stated confidence levels to actual accuracy rates. A perfectly calibrated model is correct 90% of the time when it says it is 90% confident. Poor calibration — overconfidence or underconfidence — is a distinct testable quality failure."},
+
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"Which statement about <strong>human evaluation</strong> of GenAI outputs is MOST accurate?",
+ opts:["A. Human evaluation is always more reliable than automated metrics because humans understand context",
+       "B. Human evaluation is gold-standard for nuanced quality but introduces annotator variability, fatigue, and high cost — requiring inter-rater reliability measurement",
+       "C. Human evaluation cannot be used alongside automated metrics",
+       "D. Human evaluation is only appropriate for image generation, not text"],
+ ans:1,
+ exp:"Human evaluation captures nuanced quality that metrics miss, but suffers from annotator variability, cognitive fatigue, and cost. Inter-rater reliability scores (Cohen's κ, Krippendorff's α) are necessary to validate evaluation consistency."},
+
+{ch:"CH 4",chn:"Evaluation Methods and Metrics",
+ q:"A tester uses <strong>A/B evaluation</strong> to compare two prompt versions. Version A achieves a 62% win rate over Version B across 200 pairwise comparisons. What is the CORRECT interpretation?",
+ opts:["A. Version A is definitively superior and should be deployed immediately",
+       "B. Version A shows a majority preference, but statistical significance must be confirmed before drawing conclusions",
+       "C. Version B should be discarded since it lost more than 50% of comparisons",
+       "D. The result is inconclusive because only one evaluator was used"],
+ ans:1,
+ exp:"A 62% win rate may or may not be statistically significant depending on sample size and variance. A binomial significance test (or equivalent) is needed to confirm the difference is not due to chance before acting on the result."},
+
+/* ══ CH 5 — Risks, Strategy & LLMOps (Q34-40) ══════════════════════ */
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"A GenAI model is found to reproduce exact paragraphs from copyrighted books present in its training data when prompted with the first sentence. This is called:",
+ opts:["A. Semantic drift",
+       "B. Training data memorisation or extraction — an IP and privacy risk",
+       "C. Prompt injection",
+       "D. Embedding collision"],
+ ans:1,
+ exp:"LLMs can memorise and reproduce verbatim training data, especially repeated or unique content. This creates legal IP exposure and, if PII was in training data, a privacy breach — a testable risk requiring memorisation probing as part of red-teaming."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"An organisation deploys a GenAI assistant that users can interact with via a public API. An attacker submits a crafted document for the model to summarise; the document contains hidden instructions that cause the model to exfiltrate user data. This attack is BEST classified as:",
+ opts:["A. SQL injection",
+       "B. Indirect prompt injection via untrusted external content",
+       "C. Cross-site scripting (XSS)",
+       "D. Man-in-the-middle API interception"],
+ ans:1,
+ exp:"Indirect prompt injection embeds malicious instructions inside external content (documents, web pages, emails) that the model processes — bypassing direct input filters. It is OWASP LLM Top 10 item #1 and a critical security test category."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"Under the EU AI Act, which category of AI system is subject to <strong>transparency obligations</strong> requiring users to be informed they are interacting with AI?",
+ opts:["A. High-risk AI systems in medical diagnosis",
+       "B. Limited-risk AI systems such as chatbots and deepfake generators",
+       "C. Minimal-risk AI systems such as spam filters",
+       "D. Prohibited AI systems such as social scoring"],
+ ans:1,
+ exp:"The EU AI Act's limited-risk category imposes specific transparency obligations — chatbots must disclose they are AI; deepfake content must be labelled. This is a compliance test requirement for affected products."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"A test manager is defining a <strong>shift-left</strong> strategy for GenAI quality. Which activity BEST exemplifies shift-left in this context?",
+ opts:["A. Running user acceptance tests immediately before production deployment",
+       "B. Evaluating prompt design and system prompt constraints during requirements and design phases, before any code is written",
+       "C. Monitoring model outputs in production using a real-time dashboard",
+       "D. Conducting a post-incident review after a hallucination causes a customer complaint"],
+ ans:1,
+ exp:"Shift-left moves quality activities earlier. For GenAI, this means evaluating prompt design, system constraints, model selection, and evaluation criteria at design time — catching quality gaps before they are embedded in the system architecture."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"Which monitoring signal is MOST useful for detecting <strong>model drift</strong> in a deployed GenAI system over time?",
+ opts:["A. CPU utilisation of the inference server",
+       "B. Tracking evaluation metric distributions on a rolling sample of production inputs over time",
+       "C. Number of API calls per hour",
+       "D. Size of the model's system prompt"],
+ ans:1,
+ exp:"Model drift — degradation of output quality as the input distribution shifts from the training distribution — is detected by tracking quality metrics (user satisfaction, automated scorer distributions) over time on live traffic samples."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"A development team wants to use GenAI to assist with <strong>test case generation</strong>. Which risk MUST be explicitly managed?",
+ opts:["A. The GenAI tool will always generate too few test cases",
+       "B. Generated test cases may contain incorrect assertions, miss edge cases, or hallucinate API signatures — requiring human review before use",
+       "C. GenAI-generated test cases are not executable in standard test frameworks",
+       "D. GenAI test generation requires access to model weights"],
+ ans:1,
+ exp:"GenAI-generated test cases can contain plausible-looking but incorrect assertions, miss important negative paths, or hallucinate non-existent function signatures. They accelerate test creation but require engineer review — they are a starting point, not a finished artefact."},
+
+{ch:"CH 5",chn:"GenAI Risks, Strategy & LLMOps",
+ q:"Which of the following BEST describes the concept of <strong>human-in-the-loop</strong> (HITL) in deployed GenAI systems, and when is it MOST critical?",
+ opts:["A. Having a developer review model architecture before training begins",
+       "B. Requiring a human to review and approve high-stakes or low-confidence model outputs before they trigger irreversible actions",
+       "C. Logging all model interactions for later batch review",
+       "D. Using human evaluators exclusively and removing all automated evaluation"],
+ ans:1,
+ exp:"HITL inserts human review at decision points where errors are costly or irreversible — medical recommendations, legal document generation, financial transactions. Testing HITL systems requires verifying that escalation triggers fire correctly and human override is always possible."},
+];
+
+/* ──────────────────────────────────────────────────────────── */
+const userAns = new Array(QS.length).fill(null);
+
+function buildExam(){
+  const exam = document.getElementById('exam');
+  let lastCh = '';
+
+  QS.forEach((q,i)=>{
+    const chKey = q.ch + q.chn;
+    if(chKey !== lastCh){
+      lastCh = chKey;
+      const cdiv = document.createElement('div');
+      cdiv.className = 'chapter-wrap';
+      cdiv.innerHTML = `<div class="chapter-div">
+        <div class="ch-pill">${q.ch}</div>
+        <div>
+          <div class="ch-name">${q.chn}</div>
+          <div class="ch-line"></div>
+        </div>
+      </div>`;
+      exam.appendChild(cdiv);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'q-wrap';
+    const n2 = String(i+1).padStart(2,'0');
+    wrap.innerHTML = `<div class="q-card" id="qc${i}">
+      <div class="q-stripe"></div>
+      <div class="q-watermark">${n2}</div>
+      <div class="q-num">Q${n2} / 40</div>
+      <div class="q-text">${q.q}</div>
+      <ul class="options" id="opts${i}">
+        ${q.opts.map((o,j)=>`<li class="opt" onclick="pick(${i},${j})">
+          <span class="opt-key">${String.fromCharCode(65+j)}</span>
+          <span>${o.replace(/^[A-D]\.\s*/,'')}</span>
+        </li>`).join('')}
+      </ul>
+      <div class="reveal" id="rev${i}">
+        <div class="reveal-label">CORRECT ANSWER: ${String.fromCharCode(65+q.ans)}</div>
+        <div class="reveal-exp">${q.exp}</div>
+      </div>
+      <button class="toggle" onclick="toggleRev(${i})">SHOW ANSWER</button>
+    </div>`;
+    exam.appendChild(wrap);
+  });
+  updateProgress();
+}
+
+function pick(qi,oi){
+  userAns[qi]=oi;
+  document.querySelectorAll(`#opts${qi} .opt`).forEach((el,j)=>{
+    el.classList.toggle('selected', j===oi);
+  });
+  document.getElementById(`qc${qi}`).classList.add('answered');
+  updateProgress();
+}
+
+function toggleRev(qi){
+  const r = document.getElementById(`rev${qi}`);
+  const b = r.nextElementSibling;
+  const show = r.classList.toggle('show');
+  b.textContent = show ? 'HIDE ANSWER' : 'SHOW ANSWER';
+}
+
+function updateProgress(){
+  const done = userAns.filter(x=>x!==null).length;
+  document.getElementById('pFill').style.width = (done/QS.length*100)+'%';
+  document.getElementById('pLabel').textContent = `${done} / ${QS.length} answered`;
+}
+
+function submitAll(){
+  let score = 0;
+  QS.forEach((q,i)=>{
+    const opts = document.querySelectorAll(`#opts${i} .opt`);
+    opts.forEach((el,j)=>{
+      el.classList.remove('selected','correct','wrong');
+      if(j===q.ans) el.classList.add('correct');
+      else if(j===userAns[i]) el.classList.add('wrong');
+    });
+    document.getElementById(`rev${i}`).classList.add('show');
+    document.getElementById(`rev${i}`).nextElementSibling.textContent='HIDE ANSWER';
+    if(userAns[i]===q.ans) score++;
+  });
+
+  const pct  = Math.round(score/QS.length*100);
+  const pass = score >= 26;
+  const sb   = document.getElementById('scoreBox');
+
+  document.getElementById('sVal').textContent  = score;
+  document.getElementById('sPct').textContent  = pct+'%';
+  document.getElementById('sVal').style.color  = pass ? 'var(--green)' : 'var(--red)';
+  document.getElementById('sPct').style.color  = pass ? 'var(--green)' : 'var(--red)';
+
+  const verdict = document.getElementById('sVerdict');
+  verdict.textContent  = pass ? 'PASS ✓' : 'FAIL ✗';
+  verdict.className    = 'verdict ' + (pass ? 'pass-color' : 'fail-color');
+
+  document.getElementById('sSub').textContent = pass
+    ? 'Ready for the real exam — keep revising!'
+    : `${26-score} more correct needed to pass`;
+
+  sb.classList.add('show');
+  sb.scrollIntoView({behavior:'smooth'});
+  document.getElementById('pFill').style.width='100%';
+  document.getElementById('pLabel').textContent='40 / 40 answered';
+}
+
+buildExam();
+</script>
+</body>
+</html>
